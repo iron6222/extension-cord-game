@@ -55,7 +55,20 @@ body{margin:0;font-family:"Microsoft JhengHei","Noto Sans TC",Arial,sans-serif;b
     line-height:1.65;
     font-weight:700
 }
+.player-form{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  margin:20px 0;
+}
 
+.player-form input{
+  padding:14px;
+  font-size:18px;
+  border:2px solid #b7cde0;
+  border-radius:12px;
+  font-weight:700;
+}
 /* 新增這段 */
 .intro-list{
     margin:0 0 18px 0;
@@ -99,6 +112,11 @@ body{margin:0;font-family:"Microsoft JhengHei","Noto Sans TC",Arial,sans-serif;b
 <p>
 目標：學會延長線安全使用原則，避免過載、發熱與火災。
 </p>
+<div class="player-form">
+  <input id="playerName" type="text" placeholder="請輸入姓名">
+  <input id="employeeId" type="text" placeholder="請輸入工號">
+  <input id="department" type="text" placeholder="請輸入部門">
+</div>
 <button class="btn primary" onclick="startGame()">▶ 開始遊戲</button></div></div>
 <div class="editor-note"><b>定期更換遊戲內容方式：</b><br>1. 圖片：替換 images 資料夾內同檔名圖片。<br>2. 題目、答案、提示、解說：修改 HTML 下方 <b>levels</b> 陣列。<br>3. 若要新增關卡：複製 levels 陣列其中一段即可。</div>
 </div>
@@ -247,16 +265,35 @@ function buildPreview(){
 ========================================================= */
 
 function startGame(){
-    current = 0;             // 從第 1 關開始
-    score = 0;               // 分數歸零
-    correct = 0;             // 答對題數歸零
-    selected = null;         // 清空選擇
-    answered = false;        // 清空作答狀態
-    wrongAnswers = [];       // 清空錯題回顧
-    startedAt = Date.now();  // 記錄開始時間
 
-    showScreen("game");      // 切換到遊戲畫面
-    renderLevel();           // 顯示目前關卡
+    // 取得玩家資料
+    const name = document.getElementById("playerName").value.trim();
+    const empId = document.getElementById("employeeId").value.trim();
+    const dept = document.getElementById("department").value.trim();
+
+    // 檢查是否有填寫
+    if(!name || !empId || !dept){
+        alert("請完整填寫姓名、工號與部門！");
+        return;
+    }
+
+    // 儲存玩家資料
+    localStorage.setItem("playerName", name);
+    localStorage.setItem("employeeId", empId);
+    localStorage.setItem("department", dept);
+
+    // 初始化遊戲
+    current=0;
+    score=0;
+    correct=0;
+    wrongAnswers=[];
+    startedAt=Date.now();
+
+    // 切換畫面
+    showScreen("game");
+
+    // 顯示關卡
+    renderLevel();
 }
 
 /* =========================================================
@@ -500,10 +537,52 @@ function nextLevel(){
 /* =========================================================
    結果頁
 ========================================================= */
+function saveGameResult(){
+
+    const name = localStorage.getItem("playerName") || "";
+    const employeeId = localStorage.getItem("employeeId") || "";
+    const department = localStorage.getItem("department") || "";
+
+    const result = {
+        time: new Date().toLocaleString(),
+        name: name,
+        employeeId: employeeId,
+        department: department,
+        score: score,
+        correct: correct,
+        total: levels.length,
+        wrongQuestions: wrongAnswers.map(w => w.title).join("、"),
+        needImprove: wrongAnswers.map(w => w.explanation).join("；"),
+        status: "已完成"
+    };
+
+   console.log("本次遊戲紀錄：", result);
+
+   submitResultToGoogleSheet(result);
+
+   return result;
+}
+function submitResultToGoogleSheet(data){
+
+    const url = "https://script.google.com/macros/s/AKfycbzdAovH8eCdQ0IqK1hMW7dhzPmkNCW9DYYFCcDtDaZkCou9HkOH4kGo7mSnshRcLQp0VA/exec";
+
+    fetch(url,{
+        method:"POST",
+        mode:"no-cors",
+        body:JSON.stringify(data)
+    })
+    .then(()=>{
+        console.log("已送出成績資料");
+    })
+    .catch(error=>{
+        console.error("上傳失敗：",error);
+    });
+}
 
 function finishGame(){
     stopTimer();
-
+    const gameResult = saveGameResult();
+    //submitResultToGoogleSheet();
     // 計算總花費時間
     const sec = Math.round((Date.now() - startedAt) / 1000);
 
