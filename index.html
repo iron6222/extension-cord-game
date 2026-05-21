@@ -266,33 +266,45 @@ function buildPreview(){
 
 function startGame(){
 
-    // 取得玩家資料
     const name = document.getElementById("playerName").value.trim();
     const empId = document.getElementById("employeeId").value.trim();
     const dept = document.getElementById("department").value.trim();
 
-    // 檢查是否有填寫
-    if(!name || !empId || !dept){
-        alert("請完整填寫姓名、工號與部門！");
+    // 姓名：只能中文，2～5 個字
+    const nameRule = /^[\u4e00-\u9fa5]{2,5}$/;
+
+    // 工號：只能數字，建議 2～10 碼
+    const empRule = /^[0-9]{2,10}$/;
+
+    // 部門：只能中文，2～10 個字
+    const deptRule = /^[\u4e00-\u9fa5]{2,10}$/;
+
+    if(!nameRule.test(name)){
+        alert("姓名請輸入中文，長度 2～5 個字。");
         return;
     }
 
-    // 儲存玩家資料
+    if(!empRule.test(empId)){
+        alert("工號請輸入數字，長度 2～10 碼。");
+        return;
+    }
+
+    if(!deptRule.test(dept)){
+        alert("部門請輸入中文，長度 2～10 個字。");
+        return;
+    }
+
     localStorage.setItem("playerName", name);
     localStorage.setItem("employeeId", empId);
     localStorage.setItem("department", dept);
 
-    // 初始化遊戲
-    current=0;
-    score=0;
-    correct=0;
-    wrongAnswers=[];
-    startedAt=Date.now();
+    current = 0;
+    score = 0;
+    correct = 0;
+    wrongAnswers = [];
+    startedAt = Date.now();
 
-    // 切換畫面
     showScreen("game");
-
-    // 顯示關卡
     renderLevel();
 }
 
