@@ -43,7 +43,17 @@ body{margin:0;font-family:"Microsoft JhengHei","Noto Sans TC",Arial,sans-serif;b
 
     padding:10px;
 }
+.image-start-area{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
 
+.left-start-btn{
+    margin-top:18px;
+    width:220px;
+    padding:12px 24px;
+}
 .home-info h2{
     margin:4px 0 10px;
     font-size:32px;
@@ -102,8 +112,14 @@ body{margin:0;font-family:"Microsoft JhengHei","Noto Sans TC",Arial,sans-serif;b
 <div class="header"><div class="title">延長線安全<span>小達人</span> ⚡</div><div class="subtitle">找出危險用電行為，避免火災發生！</div></div>
 <div class="home-layout">
 <div class="panel">
-<div class="home-main"><img class="home-image" src="images/level.png" alt="首頁主視覺">
-<button class="btn primary" onclick="startGame()">▶ 開始遊戲</button></div></div>
+<div class="home-main">
+  <div class="image-start-area">
+    <img class="home-image" src="images/level.png" alt="首頁主視覺">
+    <button class="btn primary left-start-btn" onclick="startGame()">
+      ▶ 開始遊戲
+    </button>
+  </div>
+</div>    
 <div class="home-info">
 <h2>遊戲說明</h2>
 <ul class="intro-list">
