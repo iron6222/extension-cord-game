@@ -1034,6 +1034,7 @@
            12. 結果儲存與 Google Sheet 上傳
         ========================================================= */
         function saveGameResult() {
+            const totalTime = Math.round((Date.now() - startedAt) / 1000);
             const result = {
                 time: new Date().toLocaleString(),
                 name: localStorage.getItem("playerName") || "",
