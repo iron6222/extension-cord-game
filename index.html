@@ -1034,7 +1034,7 @@
            12. 結果儲存與 Google Sheet 上傳
         ========================================================= */
         function saveGameResult() {
-            const totalTime = Math.round((Date.now() - startedAt) / 1000);
+            const playSeconds = Math.round((Date.now() - startedAt) / 1000);
             const result = {
                 time: new Date().toLocaleString(),
                 name: localStorage.getItem("playerName") || "",
@@ -1043,7 +1043,7 @@
                 score: score,
                 correct: correct,
                 total: levels.length,
-                totalTime: totalTime,
+                totalTime: playSeconds,
                 wrongQuestions: wrongAnswers.map(wrong => wrong.title).join("、"),
                 needImprove: wrongAnswers.map(wrong => wrong.explanation).join("；"),
                 status: "已完成"
